@@ -1,0 +1,101 @@
+---
+title: "Milestone Report"
+author: "Henry Bowers"
+date: "Sunday, March 29, 2015"
+output: html_document
+---
+
+##Background
+
+The rate of adoption of smartphones and tables is increasing exponentially on a global scale. Texting is a  major driver of adoption. Users crave innovations that make texting easier, faster, and more accurate. Mobile device manufacturers that can provide superior texting experiences stand out from their competitors. Text prediction technology - software that predicts the next word a mobile user will type - had strong potential to provide that superior experience.
+
+I initiated the Capstone project to develop a text predictor for mobile devices.This report summarizes the findings of the recently completed exploratory phase of the project.
+
+##Exploration Phase Results
+
+The goal of this phase was to understand what and how much data is required to produce a mobile  text predictor for the English language. To achieve this goal I examined text extracts of blogs, news sites, and twitter posts (tweets) on the web. 
+
+```{r, echo=FALSE,warning=FALSE,tidy=TRUE,cache=TRUE}
+source("tm-for-rmd.R")
+```
+
+###Data Analysis
+
+Basic statistics of the data sources follow.
+
+####News
+```{r, echo=FALSE,warning=FALSE,cache=TRUE}
+
+news <- readLines("data/en_US.news.txt",n=-1,encoding="ISO-8859-1")
+newsWC<-wc(news,digit.remove=FALSE)
+
+```
+
+Lines of text: `r length(news)`  
+Total words: `r sum(newsWC,na.rm=TRUE)`  
+Mean words per line: `r round(mean(newsWC,na.rm=TRUE),1)`  
+Max words per line: `r round(max(newsWC,na.rm=TRUE),1)`  
+Min words per line: `r round(min(newsWC,na.rm=TRUE),1)`  
+
+####Blogs
+```{r, echo=FALSE,warning=FALSE,cache=TRUE}
+
+blogs<- readLines("data/en_US.blogs.txt",n=-1,encoding="ISO-8859-1")
+blogsWC<-wc(blogs,digit.remove=FALSE)
+
+
+```
+
+Lines of text: `r length(blogs)`  
+Total words: `r sum(blogsWC,na.rm=TRUE)`  
+Mean words per line: `r round(mean(blogsWC,na.rm=TRUE),1)`  
+Max words per line: `r round(max(blogsWC,na.rm=TRUE),1)`  
+Min words per line: `r round(min(blogsWC,na.rm=TRUE),1)`  
+
+####Twitter
+```{r, echo=FALSE,warning=FALSE,cache=TRUE}
+
+twitter<- readLines("data/en_US.twitter.txt",n=-1,encoding="ISO-8859-1")
+tweetsWC<-wc(twitter,digit.remove=FALSE)
+
+```
+
+Lines of text: `r length(twitter)`  
+Total words: `r sum(tweetsWC,na.rm=TRUE)`  
+Mean words per line: `r round(mean(tweetsWC,na.rm=TRUE),1)`  
+Max words per line: `r round(max(tweetsWC,na.rm=TRUE),1)`  
+Min words per line: `r round(min(tweetsWC,na.rm=TRUE),1)` 
+
+###Text Analysis
+
+I  examined the distribution of word sequence frequency across a mixed sample of text from all three data sources. 
+
+####Single-word Sequences 
+
+```{r, echo=FALSE,warning=FALSE,tidy=TRUE}
+stats(termFreqTable$freq)
+print("Most frequent 1-grams:")
+head(termFreqTable[order(-termFreqTable$freq),])
+
+```
+
+####Two-word Sequences (bigrams)
+
+```{r, echo=FALSE,warning=FALSE,tidy=TRUE}
+stats(termFreqTable2$freq)
+print("Most frequent bigrams:")
+head(termFreqTable2[order(-termFreqTable2$freq),])
+```
+
+####Three-word Sequences (trigrams)
+
+```{r, echo=FALSE,warning=FALSE,tidy=TRUE}
+stats(termFreqTable3$freq)
+print("Most frequent trigrams:")
+head(termFreqTable3[order(-termFreqTable3$freq),])
+```
+
+
+##Proposed Prediction Model
+Based on the above analysis, my plan is to develop a model to predict the next word in a text message using the last two words typed  by the user. Given a two-word sequence, the model will attempt to find the most common three-word sequence that begins with the two words provided. "Most common" will be determined by the relative frequency of three-word sequences in the source data. If the model has no frequency information about the two-word sequence provided (the sequence does not appear in any of the source data used to create the model), the model will attempt to find the most common word that follows the second word in the two-word sequence provided, based on the relative frequency of two-word sequences in the source data.
+
