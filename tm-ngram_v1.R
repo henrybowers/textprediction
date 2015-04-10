@@ -13,7 +13,7 @@ require("qdap")
 require("stringr")
 require("slam")
 
-#setwd("~/Projects/Capstone/textprediction")
+setwd("~/Projects/Capstone/textprediction")
 
 news <- readLines("../data/en_US.news.txt",n=-1,encoding="ISO-8859-1")
 blogs<- readLines("../data/en_US.blogs.txt",n=-1,encoding="ISO-8859-1")
@@ -23,7 +23,7 @@ text<-c(news,blogs,twitter)
 
 #### sammple x elements to reduce  size of data set ####
 
-red<-seq(1,length(text),by=500)
+red<-seq(1,length(text),by=250)
 text<-text[red]
 
 
@@ -62,7 +62,7 @@ textASCII <- strip(textASCII,char.keep="'",apostrophe.remove=FALSE)
 v<-NGramTokenizer(textASCII, Weka_control(min = 1, max = 1,delimiters=" \r\n\t.,;:\"()?!"))
 termFreqTable<-as.data.frame(table(v),stringsAsFactors=FALSE)
 names(termFreqTable)<-c("term","freq")
-termFreqTable<-termFreqTable[termFreqTable$freq>5,]
+#termFreqTable<-termFreqTable[termFreqTable$freq>1,]
 termFreqTable<-termFreqTable[order(-termFreqTable$freq),]
 
 
@@ -75,7 +75,7 @@ termFreqTable2<-termFreqTable2[order(-termFreqTable2$freq),]
 v<-NGramTokenizer(textASCII, Weka_control(min = 3, max = 3,delimiters=" \r\n\t.,;:\"()?!"))
 termFreqTable3<-as.data.frame(table(v),stringsAsFactors=FALSE)
 names(termFreqTable3)<-c("term","freq")
-#termFreqTable3<-termFreqTable3[termFreqTable3$freq>1,]
+termFreqTable3<-termFreqTable3[termFreqTable3$freq>3,]
 termFreqTable3<-termFreqTable3[order(-termFreqTable3$freq),]
 
 v<-NGramTokenizer(textASCII, Weka_control(min = 1, max = 3,delimiters=" \r\n\t.,;:\"()?!"))
@@ -111,7 +111,15 @@ print("Most frequent 1-grams:")
 head(termFreqTable[order(-termFreqTable$freq),])
 print("Most frequent bigrams:")
 head(termFreqTable2[order(-termFreqTable2$freq),])
+print("Most frequent trigrams:")
+head(termFreqTable3[order(-termFreqTable3$freq),])
+print("Most frequent n-grams:")
+head(termFreqTableN[order(-termFreqTableN$freq),])
 
+write.csv(termFreqTable,"termFreqTable.csv", row.names = FALSE)
+write.csv(termFreqTable2,"termFreqTable2.csv", row.names = FALSE)
+write.csv(termFreqTable3,"termFreqTable3.csv", row.names = FALSE)
+write.csv(termFreqTableN,"termFreqTableN.csv", row.names = FALSE)
 
 ## Calc probs ( ngram model)#######################
 
