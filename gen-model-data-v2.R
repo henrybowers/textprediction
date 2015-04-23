@@ -16,7 +16,7 @@ require("slam")
 setwd("~/Projects/Capstone/textprediction")
 
 #set size tag for output files
-sizeLabel<-"_l"
+sizeLabel<-"_unigram_prob_used_10-4"
 
 news <- readLines("../data/en_US.news.txt",n=-1,encoding="ISO-8859-1")
 blogs<- readLines("../data/en_US.blogs.txt",n=-1,encoding="ISO-8859-1")
@@ -25,9 +25,9 @@ twitter<- readLines("../data/en_US.twitter.txt",n=-1,encoding="ISO-8859-1")
 Text<-c(news,blogs,twitter)
 
 #### sammple x elements to reduce  size of data set ####
-
-red<-seq(1,length(Text),by=20)
-text<-Text[red]
+set.seed(39955)
+#red<-seq(1,length(Text),by=10)
+text<-sample(Text,50000)
 
 
 #### clean imported text and create corpus  #####################################################
@@ -66,26 +66,26 @@ textASCII <- strip(textASCII,char.keep="'",apostrophe.remove=FALSE)
 v<-NGramTokenizer(textASCII, Weka_control(min = 1, max = 1,delimiters=" \r\n\t.,;:\"()?!"))
 termFreqTable<-as.data.frame(table(v),stringsAsFactors=FALSE)
 names(termFreqTable)<-c("term","freq")
-termFreqTable<-termFreqTable[termFreqTable$freq>0,]
+termFreqTable<-termFreqTable[termFreqTable$freq>4,]
 termFreqTable<-termFreqTable[order(-termFreqTable$freq),]
 
 
 v<-NGramTokenizer(textASCII, Weka_control(min = 2, max = 2,delimiters=" \r\n\t.,;:\"()?!"))
 termFreqTable2<-as.data.frame(table(v),stringsAsFactors=FALSE)
 names(termFreqTable2)<-c("term","freq")
-termFreqTable2<-termFreqTable2[termFreqTable2$freq>2,]
+termFreqTable2<-termFreqTable2[termFreqTable2$freq>4,]
 termFreqTable2<-termFreqTable2[order(-termFreqTable2$freq),]
 
 v<-NGramTokenizer(textASCII, Weka_control(min = 3, max = 3,delimiters=" \r\n\t.,;:\"()?!"))
 termFreqTable3<-as.data.frame(table(v),stringsAsFactors=FALSE)
 names(termFreqTable3)<-c("term","freq")
-termFreqTable3<-termFreqTable3[termFreqTable3$freq>2,]
+termFreqTable3<-termFreqTable3[termFreqTable3$freq>4,]
 termFreqTable3<-termFreqTable3[order(-termFreqTable3$freq),]
 
 v<-NGramTokenizer(textASCII, Weka_control(min = 4, max = 4,delimiters=" \r\n\t.,;:\"()?!"))
 termFreqTable4<-as.data.frame(table(v),stringsAsFactors=FALSE)
 names(termFreqTable4)<-c("term","freq")
-termFreqTable4<-termFreqTable4[termFreqTable4$freq>2,]
+termFreqTable4<-termFreqTable4[termFreqTable4$freq>4,]
 termFreqTable4<-termFreqTable4[order(-termFreqTable4$freq),]
 
 
@@ -161,7 +161,7 @@ termFreqTable$prob <- termFreqTable$freq/sum(termFreqTable$freq)
 # then bigrams
 uni<-vector(mode="numeric",length=nrow(termFreqTable2))
 for(i in 1:nrow(termFreqTable2)) {
-        uni[i] <- termFreqTable[termFreqTable$term==termFreqTable2[i,]$s1,]$freq
+        uni[i] <- termFreqTable[termFreqTable$term==termFreqTable2[i,]$s2,]$freq
 }
 
 termFreqTable2$prob <- termFreqTable2$freq/uni
@@ -169,7 +169,7 @@ termFreqTable2$prob <- termFreqTable2$freq/uni
 # then trigrams
 uni<-vector(mode="numeric",length=nrow(termFreqTable3))
 for(i in 1:nrow(termFreqTable3)) {
-        uni[i] <- termFreqTable2[termFreqTable2$s1==termFreqTable3[i,]$s1 & termFreqTable2$s2==termFreqTable3[i,]$s2,]$freq
+        uni[i] <- termFreqTable[termFreqTable$term==termFreqTable3[i,]$s3,]$freq
 }
 
 termFreqTable3$prob <- termFreqTable3$freq/uni
@@ -177,7 +177,7 @@ termFreqTable3$prob <- termFreqTable3$freq/uni
 #then quadgrams
 uni<-vector(mode="numeric",length=nrow(termFreqTable4))
 for(i in 1:nrow(termFreqTable4)) {
-        uni[i] <- termFreqTable3[termFreqTable3$s1==termFreqTable4[i,]$s1 & termFreqTable3$s2==termFreqTable4[i,]$s2 & termFreqTable3$s3==termFreqTable4[i,]$s3,]$freq
+        uni[i] <- termFreqTable[termFreqTable$term==termFreqTable4[i,]$s4,]$freq
 }
 
 termFreqTable4$prob <- termFreqTable4$freq/uni
@@ -199,12 +199,14 @@ news <- readLines("../data/en_US.news.txt",n=-1,encoding="ISO-8859-1")
 blogs<- readLines("../data/en_US.blogs.txt",n=-1,encoding="ISO-8859-1")
 twitter<- readLines("../data/en_US.twitter.txt",n=-1,encoding="ISO-8859-1")
 
-text<-c(news,blogs,twitter)
+Text<-c(news,blogs,twitter)
 
 #### sammple different set of elements for testing ####
 
-red<-seq(1,length(text),by=50)
-text<-text[red]
+#### sammple x elements to reduce  size of data set ####
+set.seed(39901)
+#red<-seq(1,length(Text),by=10)
+text<-sample(Text,50000)
 
 
 #### clean imported text and create corpus  #####
@@ -243,7 +245,7 @@ textASCII <- strip(textASCII,char.keep="'",apostrophe.remove=FALSE)
 v<-NGramTokenizer(textASCII, Weka_control(min = 4, max = 4,delimiters=" \r\n\t.,;:\"()?!"))
 termFreqTableT<-as.data.frame(table(v),stringsAsFactors=FALSE)
 names(termFreqTableT)<-c("term","freq")
-termFreqTableT<-termFreqTableT[termFreqTableT$freq>2,]
+termFreqTableT<-termFreqTableT[termFreqTableT$freq>9,]
 termFreqTableT<-termFreqTableT[order(-termFreqTableT$freq),]
 
 l<-str_extract_all(termFreqTableT$term,"[^[:blank:]]+")

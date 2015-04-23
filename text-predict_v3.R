@@ -6,15 +6,15 @@ require(stringr)
 require(caret)
 
 #setwd()
-setwd("~/R-projects/Capstone/textprediction")
+#setwd("~/R-projects/Capstone/textprediction")
 setwd("~/Projects/Capstone/textprediction")
 
 
 #termFreqTable <- read.csv("model-data/termFreqTable.csv",stringsAsFactors=FALSE,header=TRUE)
-termFreqTable2 <- read.csv("model-data/termFreqTable2.csv",stringsAsFactors=FALSE,header=TRUE)
-termFreqTable3 <- read.csv("model-data/termFreqTable3.csv",stringsAsFactors=FALSE,header=TRUE)
+termFreqTable2 <- read.csv("model-data/termFreqTable2_l.csv",stringsAsFactors=FALSE,header=TRUE)
+termFreqTable3 <- read.csv("model-data/termFreqTable3_l.csv",stringsAsFactors=FALSE,header=TRUE)
 #termFreqTableN <- read.csv("model-data/termFreqTableN.csv",stringsAsFactors=FALSE,header=TRUE)
-termFreqTableT <- read.csv("model-data/termFreqTableT.csv",stringsAsFactors=FALSE,header=TRUE)
+termFreqTableT <- read.csv("model-data/termFreqTableT_l.csv",stringsAsFactors=FALSE,header=TRUE)
 
 
 #decompose ngrams for faster response time
@@ -55,15 +55,8 @@ bi_next_word <- function(markov,l1) {
   matches$s2
 }
 
-#kernel
-w<-"my big"
-l<-tolower(unlist(str_extract_all(w,"[^[:blank:]]+")))
-system.time({
-matches<-tri_next_word(termFreqTable3,l[1],l[2])
-if(is.na(matches[1])) matches<-bi_next_word(termFreqTable2,l[2])
-})
-
-bi_next_word(termFreqTable2,l[2])
+#tune frequency floor of test data set
+termFreqTableT<-termFreqTableT[termFreqTableT$freq>10,]
 
 #test model
 predResults<-vector(mode = "character",length = nrow(termFreqTableT))
@@ -76,4 +69,12 @@ for(i in 1:nrow(termFreqTableT)) {
 }
 
 perf<-table(predResults==termFreqTableT$s3)
-#termFreqTableT[which(predResults!=termFreqTableT$s3),]
+paste("Accuracy =",round(perf[2]/(perf[1]+perf[2]),digits = 2))
+paste("Unknown words =",sum(triFault))
+head(termFreqTableT[which(predResults!=termFreqTableT$s3),])
+head(predResults[which(predResults!=termFreqTableT$s3)])
+
+head(termFreqTableT[which(triFault>0),])
+
+testResults<-cbind(termFreqTableT,predResults)
+
