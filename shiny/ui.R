@@ -1,15 +1,29 @@
 library(shinythemes)
 
-shinyUI(fluidPage(theme = shinytheme("united"),
+shinyUI(fluidPage(theme = shinytheme('united'),
+                  
                 fluidRow(
-                        titlePanel("Fast next-word predictor")
-                ),
-                hr('Type words here:'),
-                textInput('inputText', '', value = ""),
-                hr('Predicted next word is:'),
+                    titlePanel('Fast and furious next-word predictor')
+                    ),
+                hr(),
                 fluidRow(
-                        column(width=3, verbatimTextOutput('outputText'))
-                ),
-                fluidRow( verbatimTextOutput('parsed'))
-        )
-)
+                    column(width=4,
+                           #h4('Type words here:'),
+                           textInput('inputText', 'Type words here:', value = "")
+                           ),
+                    column(width=4,
+                           h5(strong('Predicted next word:')),
+                           h5(textOutput('outputText'))
+                           )
+                    ),
+                hr(),
+                fluidRow(
+                    column(width=12,
+                           h5(strong(('Other likely next words:'))),
+                           p(),
+                           tableOutput('goodMatches')
+                           )
+                    )
+                )
+    )
+ 

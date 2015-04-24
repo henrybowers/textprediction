@@ -7,11 +7,11 @@ require(stringr)
 setwd("~/Projects/Capstone/textprediction")
 
 
-termFreqTable <- read.csv("model-data/termFreqTable_unigram_prob_used_10-4.csv",stringsAsFactors=FALSE,header=TRUE)
-termFreqTable2 <- read.csv("model-data/termFreqTable2_unigram_prob_used_10-4.csv",stringsAsFactors=FALSE,header=TRUE)
-termFreqTable3 <- read.csv("model-data/termFreqTable3_unigram_prob_used_10-4.csv",stringsAsFactors=FALSE,header=TRUE)
-termFreqTable4 <- read.csv("model-data/termFreqTable4_unigram_prob_used_10-4.csv",stringsAsFactors=FALSE,header=TRUE)
-termFreqTableT <- read.csv("model-data/termFreqTableT_unigram_prob_used_10-4.csv",stringsAsFactors=FALSE,header=TRUE)
+termFreqTable <- read.csv("model-data/termFreqTable_50K_4.csv",stringsAsFactors=FALSE,header=TRUE)
+termFreqTable2 <- read.csv("model-data/termFreqTable2_50K_4.csv",stringsAsFactors=FALSE,header=TRUE)
+termFreqTable3 <- read.csv("model-data/termFreqTable3_50K_4.csv",stringsAsFactors=FALSE,header=TRUE)
+termFreqTable4 <- read.csv("model-data/termFreqTable4_50K_4.csv",stringsAsFactors=FALSE,header=TRUE)
+termFreqTableT <- read.csv("model-data/termFreqTableT_50K_4.csv",stringsAsFactors=FALSE,header=TRUE)
 
 
 #save tableframes for fast import later
