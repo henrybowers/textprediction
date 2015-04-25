@@ -11,7 +11,7 @@ shinyUI(fluidPage(theme = shinytheme('united'),
                            #h4('Type words here:'),
                            textInput('inputText', 'Type words here:', value = "")
                            ),
-                    column(width=4,
+                    column(width=3,
                            h5(strong('Predicted next word:')),
                            h5(textOutput('outputText'))
                            )

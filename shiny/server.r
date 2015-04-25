@@ -4,10 +4,10 @@
 require(stringr)
 
 #load ngram models
-termFreqTable <- read.csv("model-data/termFreqTable_50K_4.csv",stringsAsFactors=FALSE,header=TRUE)
-termFreqTable2 <- read.csv("model-data/termFreqTable2_50K_4.csv",stringsAsFactors=FALSE,header=TRUE)
-termFreqTable3 <- read.csv("model-data/termFreqTable3_50K_4.csv",stringsAsFactors=FALSE,header=TRUE)
-termFreqTable4 <- read.csv("model-data/termFreqTable4_50K_4.csv",stringsAsFactors=FALSE,header=TRUE)
+termFreqTable <- read.csv("model-data/termFreqTable_200K_4.csv",stringsAsFactors=FALSE,header=TRUE)
+termFreqTable2 <- read.csv("model-data/termFreqTable2_200K_4.csv",stringsAsFactors=FALSE,header=TRUE)
+termFreqTable3 <- read.csv("model-data/termFreqTable3_200K_4.csv",stringsAsFactors=FALSE,header=TRUE)
+termFreqTable4 <- read.csv("model-data/termFreqTable4_200K_4.csv",stringsAsFactors=FALSE,header=TRUE)
 
 
 #define helper functions
@@ -67,7 +67,7 @@ shinyServer( function(input, output) {
     })
     
     output$parsed <- renderText({
-        l<-tolower(unlist(str_extract_all(input$inputText,"[^[:blank:]]+")))
+        l<-tolower(unlist(str_extract_all(input$inputText,"[^[:blank:]+")))
         if(length(l)>3) l<-c(l[length(l)-2],l[length(l)-1],l[length(l)])
         l
         })
@@ -78,3 +78,4 @@ shinyServer( function(input, output) {
                 
     }
 )
+

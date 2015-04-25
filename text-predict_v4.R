@@ -6,13 +6,20 @@ require(stringr)
 #setwd("~/R-projects/Capstone/textprediction")
 setwd("~/Projects/Capstone/textprediction")
 
+#choose model to test
+sizeLabel<-"_200K_4"
 
-termFreqTable <- read.csv("model-data/termFreqTable_50K_4.csv",stringsAsFactors=FALSE,header=TRUE)
-termFreqTable2 <- read.csv("model-data/termFreqTable2_50K_4.csv",stringsAsFactors=FALSE,header=TRUE)
-termFreqTable3 <- read.csv("model-data/termFreqTable3_50K_4.csv",stringsAsFactors=FALSE,header=TRUE)
-termFreqTable4 <- read.csv("model-data/termFreqTable4_50K_4.csv",stringsAsFactors=FALSE,header=TRUE)
-termFreqTableT <- read.csv("model-data/termFreqTableT_50K_4.csv",stringsAsFactors=FALSE,header=TRUE)
+termFreqTable <- read.csv(paste("model-data/termFreqTable",sizeLabel,".csv",sep=""),stringsAsFactors=FALSE,header=TRUE)
+termFreqTable2 <- read.csv(paste("model-data/termFreqTable2",sizeLabel,".csv",sep=""),stringsAsFactors=FALSE,header=TRUE)
+termFreqTable3 <- read.csv(paste("model-data/termFreqTable3",sizeLabel,".csv",sep=""),stringsAsFactors=FALSE,header=TRUE)
+termFreqTable4 <- read.csv(paste("model-data/termFreqTable4",sizeLabel,".csv",sep=""),stringsAsFactors=FALSE,header=TRUE)
+termFreqTableT <- read.csv("model-data/termFreqTableT_100K_4.csv",stringsAsFactors=FALSE,header=TRUE)
 
+#for yucks--remove quickly
+#termFreqTableT <- termFreqTable4
+
+#vary frequency floor of test set (baseline is >4)
+termFreqTableT <- termFreqTableT[termFreqTableT$freq>49,]
 
 #save tableframes for fast import later
 #save(termFreqTable,"termFreqTable",file="termFreqTable.RData")
@@ -62,12 +69,14 @@ for(i in 1:nrow(termFreqTableT)) {
 }
 
 perf<-table(predResults==termFreqTableT$s4)
-paste("Accuracy =",round(perf[2]/(perf[1]+perf[2]),digits = 2))
-paste("Unknown quadgrams =",sum(quadFault))
 head(termFreqTableT[which(predResults!=termFreqTableT$s4),])
 head(predResults[which(predResults!=termFreqTableT$s4)])
 
 head(termFreqTableT[which(quadFault>0),])
 
 testResults<-cbind(termFreqTableT,predResults)
+
+paste("Accuracy = ",round(perf[2]/(perf[1]+perf[2]),digits = 2))
+paste("Unknown quadgrams = ",sum(quadFault))
+paste("Unknown words = ",nrow(testResults[grep("NO MATCH",testResults$predResults),]))
 

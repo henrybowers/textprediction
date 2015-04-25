@@ -15,10 +15,16 @@ require("slam")
 
 setwd("~/Projects/Capstone/textprediction")
 
-#set size tag for output files
-sizeLabel<-"_50K_4"
+#### config training set ######################
+
 #set min frequency to keep (floor+1)
 floor <- 4
+
+#set corpus sample size
+sampleSize <- 5000
+
+#set config tag for output filenames
+sizeLabel <- paste("_",sampleSize/1000,"K_",floor,sep="")
 
 news <- readLines("../data/en_US.news.txt",n=-1,encoding="ISO-8859-1")
 blogs<- readLines("../data/en_US.blogs.txt",n=-1,encoding="ISO-8859-1")
@@ -29,7 +35,7 @@ Text<-c(news,blogs,twitter)
 #### sammple x elements to reduce  size of data set ####
 set.seed(39955)
 #red<-seq(1,length(Text),by=10)
-text<-sample(Text,50000)
+text<-sample(Text,sampleSize)
 
 
 #### clean imported text and create corpus  #####################################################
@@ -42,8 +48,7 @@ textASCII<-gsub("<[0-9|a-z][0-9|a-z]>","",text_)
 #grep("<[0-9|a-z][0-9|a-z]>",textASCII)
 
 # make some space
-remove(news,blogs,twitter,text,text_)
-#remove(text,text_)
+remove(text,text_)
 
 # remove quotes and forward slashes (not covered by removePunctuation)
 textASCII<-gsub("\"","",textASCII)
@@ -196,20 +201,12 @@ write.csv(termFreqTable4,paste("termFreqTable4",sizeLabel,".csv",sep=""), row.na
 
 ## Create final test set (repeats code above - would be cleaner to weave into
 
-news <- readLines("../data/en_US.news.txt",n=-1,encoding="ISO-8859-1")
-blogs<- readLines("../data/en_US.blogs.txt",n=-1,encoding="ISO-8859-1")
-twitter<- readLines("../data/en_US.twitter.txt",n=-1,encoding="ISO-8859-1")
-
-Text<-c(news,blogs,twitter)
-
 #### sammple different set of elements for testing ####
 
-#### sammple x elements to reduce  size of data set ####
 #use different seed then training data to introduce unseen unigrams
 set.seed(39901)
 #red<-seq(1,length(Text),by=10)
-text<-sample(Text,5000)
-
+text<-sample(Text,100000)
 
 #### clean imported text and create corpus  #####
 
@@ -221,7 +218,7 @@ textASCII<-gsub("<[0-9|a-z][0-9|a-z]>","",text_)
 #grep("<[0-9|a-z][0-9|a-z]>",textASCII)
 
 # make some space
-remove(news,blogs,twitter,text,text_)
+remove(text,text_)
 
 # remove quotes and forward slashes (not covered by removePunctuation)
 textASCII<-gsub("\"","",textASCII)
@@ -247,7 +244,7 @@ textASCII <- strip(textASCII,char.keep="'",apostrophe.remove=FALSE)
 v<-NGramTokenizer(textASCII, Weka_control(min = 4, max = 4,delimiters=" \r\n\t.,;:\"()?!"))
 termFreqTableT<-as.data.frame(table(v),stringsAsFactors=FALSE)
 names(termFreqTableT)<-c("term","freq")
-termFreqTableT<-termFreqTableT[termFreqTableT$freq>floor,]
+termFreqTableT<-termFreqTableT[termFreqTableT$freq>9,]
 termFreqTableT<-termFreqTableT[order(-termFreqTableT$freq),]
 
 l<-str_extract_all(termFreqTableT$term,"[^[:blank:]]+")
@@ -256,6 +253,6 @@ names(temp)<-c("s1","s2","s3","s4")
 termFreqTableT<-cbind(termFreqTableT,temp)
 remove(temp)
 
-# write final test set to file
-write.csv(termFreqTableT,paste("termFreqTableT",sizeLabel,".csv",sep=""), row.names = FALSE)
+# write final test set to file (sample size params,floor, file name stays constant)
+write.csv(termFreqTableT,paste("termFreqTableT_100K_4",".csv",sep=""), row.names = FALSE)
 
